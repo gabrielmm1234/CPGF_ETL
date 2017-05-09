@@ -1,5 +1,7 @@
 package paymentCard;
 
+import java.io.IOException;
+
 public class PaymentCard {
 	
 	private Long codOrgSup;
@@ -38,6 +40,70 @@ public class PaymentCard {
 		this.cnpjOuCpfFavorecido = cnpjOuCpfFavorecido;
 		this.nomeFavorecido = nomeFavorecido;
 		this.valorTransacao = valorTransacao;
+	}
+	
+	public PaymentCard() {
+		
+	}
+
+	public PaymentCard buildPaymentCard(String[] linePayment) throws IOException {
+		
+		final String VALOR_SIGILOSO = "Informações protegidas por sigilo";
+		
+    	Long codOrgSup = Long.parseLong(linePayment[0]);
+    	String nomeOrgSup = linePayment[1];
+    	
+    	Long codOrgSub = Long.parseLong(linePayment[2]);
+    	String nomeOrgSub = linePayment[3];
+    	
+    	Long codUnidadeGestora = Long.parseLong(linePayment[4]);
+    	String nomeUnidadeGestora = linePayment[5];
+    	
+    	int anoExtrato = Integer.parseInt(linePayment[6]);
+    	int mesExtrato = Integer.parseInt(linePayment[7]);
+    	
+    	String cpfPortador;
+    	String nomePortador;
+    	
+    	String nometransacao;
+    	String dataTransacao;
+    	
+    	String cnpjOuCpfFavorecido;
+    	String nomeFavorecido;
+    	
+    	Double valorTransacao;
+    	
+    	// Caso sigiloso
+    	if(linePayment.length == 9) {
+    		cpfPortador = VALOR_SIGILOSO;
+        	nomePortador = VALOR_SIGILOSO;
+        	
+        	nometransacao = VALOR_SIGILOSO;
+        	dataTransacao = VALOR_SIGILOSO;
+        	
+        	cnpjOuCpfFavorecido = VALOR_SIGILOSO;
+        	nomeFavorecido = VALOR_SIGILOSO;
+        	
+        	valorTransacao =  0.0;
+    	} else {
+    	
+	    	cpfPortador = linePayment[8];
+	    	nomePortador = linePayment[9];
+	    	
+	    	nometransacao = linePayment[10];
+	    	dataTransacao = linePayment[11];
+	    	
+	    	cnpjOuCpfFavorecido = linePayment[12];
+	    	nomeFavorecido = linePayment[13];
+	    	
+	    	valorTransacao =  Double.parseDouble(linePayment[14]);
+    	}
+    	
+    	return new PaymentCard(codOrgSup, nomeOrgSup, 
+    			codOrgSub, nomeOrgSub, codUnidadeGestora, 
+    			nomeUnidadeGestora, anoExtrato, mesExtrato, 
+    			cpfPortador, nomePortador, nometransacao, 
+    			dataTransacao, cnpjOuCpfFavorecido, nomeFavorecido, valorTransacao);
 	}
 
 

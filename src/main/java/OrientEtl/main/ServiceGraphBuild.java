@@ -81,12 +81,6 @@ public class ServiceGraphBuild {
 			String nomeOrgSub = e.getVertex(Direction.OUT).getProperty("nomeOrgSub");
 			String nomeUniGest = e.getVertex(Direction.IN).getProperty("nomeUniGest");
 			
-			System.out.println("nome org sub - " + nomeOrgSub);
-			System.out.println("nome uni gest - " + nomeUniGest);
-			System.out.println("nome org sub param - " + orgaoSubordinado.getProperty("nomeOrgSub"));
-			System.out.println("nome uni gest param - " + unidadeGestora.getProperty("nomeUniGest"));
-
-			
 			if(nomeOrgSub.equals(orgaoSubordinado.getProperty("nomeOrgSub")) && nomeUniGest.equals(unidadeGestora.getProperty("nomeUniGest"))) {
 				return null;
 			}
