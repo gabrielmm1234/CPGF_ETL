@@ -24,10 +24,61 @@ public class ServiceGraphBuild {
 		  
 		  buildEdgePossuiPortadores(graph, unidadeGestora, portador);
 		  
+		  Vertex transacao = buildVertexTransacao(graph, card);
+		  graph.addEdge(null, portador, transacao, "RealizaTransacao");
+		  
+		  Vertex favorecido = buildVertexFavorecido(graph, card);
+		  graph.addEdge(null, transacao, favorecido, "Favorece");
+
 		  graph.commit();
 		} catch( Exception e ) {
 		  graph.rollback();
+		} finally {
+			graph.commit();
+			graph.shutdown();
 		}
+	}
+	
+	private Vertex buildVertexFavorecido(OrientGraph graph, PaymentCard card) {
+		if(seFavorecidoVazio(card)) {
+			 Iterable<Vertex> vertice = graph.getVertices("Favorecido.nomeFavorecido", "Valor Desconhecido");
+				
+				if(!vertice.iterator().hasNext()) {
+					 Vertex Favorecido = graph.addVertex("class:Favorecido");
+					 Favorecido.setProperty("nomeFavorecido", "Valor Desconhecido");
+					 Favorecido.setProperty("cpfOuCnpjFavorecido", "Valor Desconhecido");
+					 return Favorecido;
+				} else {
+					return vertice.iterator().next();
+				}
+		}
+		Iterable<Vertex> vertice = graph.getVertices("Favorecido.nomeFavorecido", card.getNomeFavorecido());
+		
+		if(!vertice.iterator().hasNext()) {
+			 Vertex Favorecido = graph.addVertex("class:Favorecido");
+			 Favorecido.setProperty("nomeFavorecido", card.getNomeFavorecido());
+			 Favorecido.setProperty("cpfOuCnpjFavorecido", card.getCnpjOuCpfFavorecido());
+			 return Favorecido;
+		} else {
+			return vertice.iterator().next();
+		}
+	}
+
+	private boolean seFavorecidoVazio(PaymentCard card) {
+		return card.getNomeFavorecido().isEmpty() || 
+				card.getNomeFavorecido().equals("") || 
+				card.getNomeFavorecido() == null || 
+				card.getNomeFavorecido().equals(" ") ||
+				card.getCnpjOuCpfFavorecido().equals("") ||
+				card.getCnpjOuCpfFavorecido() == null;
+	}
+	
+	private Vertex buildVertexTransacao(OrientGraph graph, PaymentCard card) {
+		 Vertex transacao = graph.addVertex("class:Transacao");
+		 transacao.setProperty("nomeTransacao", card.getNometransacao());
+		 transacao.setProperty("dataTransacao", card.getDataTransacao());
+		 transacao.setProperty("valorTransacao", String.valueOf(card.getValorTransacao()));
+		 return transacao;
 	}
 	
 	private Edge buildEdgePossuiPortadores(OrientGraph graph, Vertex unidadeGestora, Vertex portador) {
