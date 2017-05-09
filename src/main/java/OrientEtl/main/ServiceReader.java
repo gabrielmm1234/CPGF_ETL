@@ -14,7 +14,7 @@ public class ServiceReader {
 		PaymentCard paymentCard = new PaymentCard();
 		String[] line;
 		int i = 0;
-		OrientGraphFactory factory = new OrientGraphFactory("plocal:/home/gabriel/Desktop/UnB/9-semestre/BDA/orient/orientdb-community-2.2.17/databases/CartõesPagamentosTeste").setupPool(1,10);
+		OrientGraphFactory factory = new OrientGraphFactory("plocal:/home/gabriel/Desktop/UnB/9-semestre/BDA/orient/orientdb-community-2.2.17/databases/CartoesPagamentos").setupPool(1,10);
 		OrientGraph graph = factory.getTx();
 		
 		ignoreHeader(reader);

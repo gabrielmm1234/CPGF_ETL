@@ -19,13 +19,44 @@ public class ServiceGraphBuild {
 		  Vertex unidadeGestora = buildVertexUnidadeGestora(graph, card);
 		  
 		  buildEdgePossuiUnidadeGestora(graph, orgaoSubordinado, unidadeGestora);
+		  
+		  Vertex portador = buildVertexPortador(graph, card);
+		  
+		  buildEdgePossuiPortadores(graph, unidadeGestora, portador);
+		  
 		  graph.commit();
 		} catch( Exception e ) {
 		  graph.rollback();
 		}
 	}
 	
-	private static Vertex buildVertexOrgaoSuperior (OrientGraph graph, PaymentCard card) {
+	private Edge buildEdgePossuiPortadores(OrientGraph graph, Vertex unidadeGestora, Vertex portador) {
+		Iterable<Edge> itOut = unidadeGestora.getEdges(Direction.OUT, "PossuiPortador");
+		for(Edge e:itOut){
+			String nomeUniGest = e.getVertex(Direction.OUT).getProperty("nomeUniGest");
+			String nomePortador = e.getVertex(Direction.IN).getProperty("nomePortador");
+			
+			if(nomeUniGest.equals(unidadeGestora.getProperty("nomeUniGest")) && nomePortador.equals(portador.getProperty("nomePortador"))) {
+				return null;
+			}
+		}
+		return graph.addEdge(null, unidadeGestora, portador, "PossuiPortador");
+	}
+	
+	private Vertex buildVertexPortador(OrientGraph graph, PaymentCard card) {
+		Iterable<Vertex> vertice = graph.getVertices("Portador.nomePortador", card.getNomePortador());
+		
+		if(!vertice.iterator().hasNext()) {
+			 Vertex portador = graph.addVertex("class:Portador");
+			 portador.setProperty("nomePortador", card.getNomePortador());
+			 portador.setProperty("cpfPortador", card.getCpfPortador());
+			 return portador;
+		} else {
+			return vertice.iterator().next();
+		}
+	}
+	
+	private Vertex buildVertexOrgaoSuperior (OrientGraph graph, PaymentCard card) {
 		Iterable<Vertex> vertice = graph.getVertices("OrgaoSuperior.nomeOrgSup", card.getNomeOrgSup());
 		
 		if(!vertice.iterator().hasNext()) {
