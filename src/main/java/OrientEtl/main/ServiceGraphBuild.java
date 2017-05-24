@@ -35,7 +35,6 @@ public class ServiceGraphBuild {
 		  graph.rollback();
 		} finally {
 			graph.commit();
-			graph.shutdown();
 		}
 	}
 	

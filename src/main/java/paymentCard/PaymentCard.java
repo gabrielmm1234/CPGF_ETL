@@ -50,6 +50,13 @@ public class PaymentCard {
 		
 		final String VALOR_SIGILOSO = "Informações protegidas por sigilo";
 		
+    	System.out.println(linePayment.length);
+    	
+    	// Caso com csv mal formatado
+    	if(linePayment.length == 2 || linePayment.length == 4 || linePayment.length == 6) {
+    		return null;
+    	}
+		
     	Long codOrgSup = Long.parseLong(linePayment[0]);
     	String nomeOrgSup = linePayment[1];
     	
@@ -73,8 +80,20 @@ public class PaymentCard {
     	
     	Double valorTransacao;
     	
+    	// Caso com csv mal formatado
+    	if(linePayment.length == 14) {
+    		cpfPortador = linePayment[8];
+	    	nomePortador = linePayment[9];
+	    	
+	    	nometransacao = linePayment[10];
+	    	dataTransacao = linePayment[11];
+	    	
+	    	cnpjOuCpfFavorecido = linePayment[12];
+	    	nomeFavorecido = linePayment[13];
+    		valorTransacao = 0.0;
+    	}
     	// Caso sigiloso
-    	if(linePayment.length == 9) {
+    	else if(linePayment.length == 9) {
     		cpfPortador = VALOR_SIGILOSO;
         	nomePortador = VALOR_SIGILOSO;
         	

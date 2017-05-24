@@ -3,6 +3,7 @@ package OrientEtl.main;
 import java.io.IOException;
 
 import com.opencsv.CSVReader;
+import com.orientechnologies.orient.client.remote.OServerAdmin;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 
@@ -17,14 +18,26 @@ public class ServiceReader {
 		
 		try {
 			ignoreHeader(reader);
-			while ((line = reader.readNext()) != null && i != 15) {
-				OrientGraphFactory factory = new OrientGraphFactory("plocal:/home/gabriel/Desktop/UnB/9-semestre/BDA/orient/orientdb-community-2.2.17/databases/CartoesPagamentos").setupPool(1,10);
-				OrientGraph graph = factory.getTx();
+			// CREATE A SERVER ADMIN CLIENT AGAINST A REMOTE SERVER TO CHECK IF DB EXISTS		
+			OServerAdmin serverAdmin = new OServerAdmin("remote:localhost:2425/CartoesPagamentos").connect("root","e54gfgfgf");
+			if(!serverAdmin.existsDatabase("CartoesPagamentos", "plocal")) {
+				serverAdmin.createDatabase("CartoesPagamentos", "graph", "plocal");
+			}
+			OrientGraphFactory factory = new OrientGraphFactory("remote:localhost:2425/CartoesPagamentos").setupPool(1,10);
+			OrientGraph graph = factory.getTx();
+			while ((line = reader.readNext()) != null) {
 				String[] lineDetail = line[0].split("\t", -1);
 				PaymentCard card = paymentCard.buildPaymentCard(lineDetail);
+				
+				if(card == null) {
+					continue;
+				}
+				
 				serviceGraphBuilder.buildGraph(graph, card);
 				i++;
 			}
+			graph.shutdown();
+			serverAdmin.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
