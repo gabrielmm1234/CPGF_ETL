@@ -19,7 +19,7 @@ public class ServiceReader {
 		try {
 			ignoreHeader(reader);
 			// CREATE A SERVER ADMIN CLIENT AGAINST A REMOTE SERVER TO CHECK IF DB EXISTS		
-			OServerAdmin serverAdmin = new OServerAdmin("remote:localhost:2425/CartoesPagamentos").connect("root","e54gfgfgf");
+			OServerAdmin serverAdmin = new OServerAdmin("remote:localhost:2425/CartoesPagamentos").connect("admin","admin");
 			if(!serverAdmin.existsDatabase("CartoesPagamentos", "plocal")) {
 				serverAdmin.createDatabase("CartoesPagamentos", "graph", "plocal");
 			}
